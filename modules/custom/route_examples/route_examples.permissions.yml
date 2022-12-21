@@ -1,0 +1,8 @@
+view any user info:
+  title: 'View any user info'
+  description: 'View the User Info page for any users'
+  restrict access: true
+
+view own user info:
+  title: 'View own user info'
+  description: 'View the User Info page for your own users'
