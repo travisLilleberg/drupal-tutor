@@ -1,1 +1,4 @@
 .idea
+sites/default/files/php/twig/*
+sites/default/files/css/*
+sites/default/files/js/*
