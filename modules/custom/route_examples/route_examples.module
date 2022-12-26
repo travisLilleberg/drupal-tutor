@@ -1,0 +1,23 @@
+<?php
+/**
+ * Implements hook_menu_links_discovered_alter().
+ */
+function route_examples_menu_links_discovered_alter(&$links): void {
+  $links['entity.user.collection']['title'] = t('Users');
+}
+
+/**
+ * Implements hook_menu_local_actions_alter().
+ */
+function route_examples_menu_local_actions_alter(&$local_actions): void {
+  $local_actions['node.add_page']['title'] = t('Add new node');
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function route_examples_menu_local_tasks_alter(&$data, $route_name): void {
+  if ($route_name === 'user.login') {
+    $data['tabs'][0]['user.login']['#link']['title'] = t('Sign in');
+  }
+}
