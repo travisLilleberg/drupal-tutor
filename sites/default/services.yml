@@ -1,0 +1,4 @@
+services:
+  service_examples.holiday_provider:
+    class: Drupal\brazil_holidays\HolidayProvider
+    arguments: ['@date.formatter']
