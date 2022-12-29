@@ -3,22 +3,34 @@
 namespace Drupal\service_examples\Controller;
 
 use \Drupal\Core\Controller\ControllerBase;
+use \Drupal\service_examples\HolidayProviderInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ServiceExamplesController extends ControllerBase {
-  public function listHolidays() {
-    $holidays = [
-      '01-01' => "New Year's Day",
-      '07-04' => 'Independence Day',
-      '12-25' => 'Christmas'
-    ];
 
+  /**
+   * @var HolidayProviderInterface
+   */
+  private $holidayProvider;
+
+  public function __construct(HolidayProviderInterface $holidayProvider) {
+    $this->holidayProvider = $holidayProvider;
+  }
+
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('service_examples.holiday_provider')
+    );
+  }
+
+  public function listHolidays() {
     $header = [
       $this->t('Date'),
       $this->t('Holiday')
     ];
 
     $rows = [];
-    foreach ($holidays as $date => $holiday) {
+    foreach ($this->holidayProvider->getHolidays() as $date => $holiday) {
       $rows[] = [
         $date,
         $holiday
