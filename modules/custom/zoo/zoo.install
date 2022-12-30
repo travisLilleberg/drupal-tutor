@@ -80,3 +80,17 @@ function zoo_schema() {
 
   return $schema;
 }
+
+/**
+ * Implements hook_install.
+ */
+function zoo_install() {
+  Drupal::Messenger()->addMessage(t('Awesome! You have a zoo!'));
+}
+
+/**
+ * Implements hook_uninstall.
+ */
+function zoo_uninstall() {
+  Drupal::Messenger()->addError(t('Oh no! Please reinstall me!'));
+}
