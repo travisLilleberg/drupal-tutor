@@ -28,10 +28,12 @@ class AnimalListController extends ControllerBase {
       $this->t('Type'),
       $this->t('Age'),
       $this->t('Weight'),
+      $this->t('Habitat'),
     ];
 
     $rows = [];
-    $results = $this->conn->query("SELECT * FROM {zoo_animal}");
+    $results = $this->conn->query("SELECT a.*, h.name AS habitat_name FROM {zoo_animal} a
+      LEFT JOIN {zoo_habitat} h ON a.habitat_id = h.habitat_id ORDER BY h.name");
     foreach ($results as $record) {
       $age = floor((\Drupal::time()->getRequestTime() - $record->birthday) / (365 * 24 * 3600));
       $rows[] = [
@@ -39,6 +41,7 @@ class AnimalListController extends ControllerBase {
         $record->type,
         $this->t('@age years', ['@age' => $age]),
         $this->t('@weight kg', ['@weight' => $record->weight]),
+        $record->habitat_name,
       ];
     }
 
