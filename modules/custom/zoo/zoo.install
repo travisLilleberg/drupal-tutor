@@ -74,6 +74,13 @@ function zoo_schema() {
         'not null' => TRUE,
         'default' => '',
       ],
+      'status' => [
+        'description' => 'The status of the habitat',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 1,
+      ],
     ],
     'primary key' => ['habitat_id'],
   ];
@@ -93,4 +100,27 @@ function zoo_install() {
  */
 function zoo_uninstall() {
   Drupal::Messenger()->addError(t('Oh no! Please reinstall me!'));
+}
+
+/**
+ * Add status column to habitat table and extend length of name field in animal table.
+ */
+function zoo_update_9101(&$sandbox) {
+  $spec = [
+    'description' => 'The status of the habitat',
+    'type' => 'int',
+    'size' => 'tiny',
+    'not null' => TRUE,
+    'default' => 1,
+  ];
+  \Drupal::database()->schema()->addField('zoo_habitat', 'status', $spec);
+
+  $spec = [
+    'description' => 'The type of animal',
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+  ];
+  \Drupal::database()->schema()->changeField('zoo_animal', 'name', 'name', $spec);
 }
