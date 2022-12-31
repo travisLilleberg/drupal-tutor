@@ -5,3 +5,10 @@ zoo.animals_list:
     _title: 'Our Animals'
   requirements:
     _permission: 'access content'
+zoo.habitat_list:
+  path: '/habitats/{habitat}'
+  defaults:
+    _controller: '\Drupal\zoo\Controller\AnimalListController::listAnimalsInHabitat'
+    _title_callback: '\Drupal\zoo\Controller\AnimalListController::listAnimalsInHabitatTitle'
+  requirements:
+    _permission: 'access content'
