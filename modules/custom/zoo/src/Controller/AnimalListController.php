@@ -61,6 +61,57 @@ class AnimalListController extends ControllerBase {
     ];
 
     $rows = [];
+    $query = $this->conn->select('zoo_animal', 'a')
+      ->fields('a')
+      ->orderBy('name');
+    if ($habitat !== 'all') {
+      $query->condition('habitat_id', $habitat);
+    }
+    $results = $query->execute();
+
+    foreach ($results as $record) {
+      $age = floor((\Drupal::time()->getRequestTime() - $record->birthday) / (365 * 24 * 3600));
+      $rows[] = [
+        $record->name,
+        $record->type,
+        $this->t('@age years', ['@age' => $age]),
+        $this->t('@weight kg', ['@weight' => $record->weight]),
+      ];
+    }
+
+    return [
+      '#theme' => 'table',
+      '#rows' => $rows,
+      '#header' => $header,
+    ];
+  }
+
+  public function listAnimalsInHabitatTitle($habitat) {
+    if ($habitat === 'all') {
+      return $this->t('Animals in All Habitats');
+    }
+    
+    $name = $this->conn->select('zoo_habitat', 'h')
+      ->fields('h', ['name'])
+      ->condition('habitat_id', $habitat)
+      ->execute()
+      ->fetchField();
+
+    if (!empty($name)) {
+      return $this->t('Animals in @habitat', ['@habitat' => $name]);
+    }
+    return $this->t('Habitat Not Found');
+  }
+
+  public function listAnimalsInHabitatStaticAPI($habitat) {
+    $header = [
+      $this->t('Name'),
+      $this->t('Type'),
+      $this->t('Age'),
+      $this->t('Weight'),
+    ];
+
+    $rows = [];
     $results = $this->conn->query(
       "SELECT * FROM {zoo_animal} WHERE habitat_id = :habitat_id ORDER BY name",
       ['habitat_id' => $habitat]
@@ -83,7 +134,7 @@ class AnimalListController extends ControllerBase {
     ];
   }
 
-  public function listAnimalsInHabitatTitle($habitat) {
+  public function listAnimalsInHabitatTitleStaticAPI($habitat) {
     $name = $this->conn->query(
       "SELECT name FROM {zoo_habitat} WHERE habitat_id = :habitat_id",
       ['habitat_id' => $habitat]
