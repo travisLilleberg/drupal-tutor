@@ -161,4 +161,90 @@ class AnimalListController extends ControllerBase {
     }
     return $this->t('Habitat Not Found');
   }
+
+  public function demoInsert() {
+    // Single Insert
+    $fields = [
+      'name' => 'Mike',
+      'type' => 'Monkey',
+      'birthday' => strtotime('2015-06-17'),
+      'weight' => 5.3,
+      'description' => 'Mike is great',
+      'habitat_id' => 4,
+    ];
+
+    $this->conn->insert('zoo_animal')
+      ->fields($fields)
+      ->execute();
+
+    // Multiple insert
+    $fields = [
+      'name',
+      'type',
+      'birthday',
+      'weight',
+      'description',
+      'habitat_id',
+    ];
+
+    $query = $this->conn->insert('zoo_animal')
+      ->fields($fields);
+
+    $values = [
+      [
+        'name' => 'Polly',
+        'type' => 'Parrotfish',
+        'birthday' => strtotime('2013-09-10'),
+        'weight' => 8.1,
+        'description' => 'Polly is colorful',
+        'habitat_id' => 2,
+      ],
+      [
+        'name' => 'Maggie',
+        'type' => 'Macaw',
+        'birthday' => strtotime('2014-02-02'),
+        'weight' => 2.5,
+        'description' => 'Maggie is grumpy',
+        'habitat_id' => 3,
+      ],
+    ];
+
+    foreach ($values as $value) {
+      $query->values($value);
+    }
+    $query->execute();
+
+    return [
+      '#markup' => $this->t('Inserts completed')
+    ];
+  }
+
+  public function demoUpdate() {
+    $fields_to_change = [
+      'type' => 'Howler Monkey',
+      'weight' => 6.7
+    ];
+
+    $this->conn->update('zoo_animal')
+      ->fields($fields_to_change)
+      ->condition('name', 'Mike')
+      ->execute();
+
+    return [
+      '#markup' => $this->t('Update completed')
+    ];
+  }
+
+  public function demoDelete() {
+    $this->conn->delete('zoo_animal')
+      ->condition('name', 'Mike')
+      ->execute();
+    $this->conn->delete('zoo_animal')
+      ->condition('name', ['Polly', 'Maggie'], 'IN')
+      ->execute();
+
+    return [
+      '#markup' => $this->t('Deletes completed')
+    ];
+  }
 }
