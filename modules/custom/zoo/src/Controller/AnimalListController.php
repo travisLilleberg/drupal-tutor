@@ -62,7 +62,8 @@ class AnimalListController extends ControllerBase {
 
     $rows = [];
     $query = $this->conn->select('zoo_animal', 'a')
-      ->fields('a');
+      ->fields('a')
+      ->range(0,10);
 
     if ($habitat === 'all') {
       $header[] = $this->t('Habitat');
