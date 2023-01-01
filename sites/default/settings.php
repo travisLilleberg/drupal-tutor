@@ -806,18 +806,6 @@ $databases['default']['default'] = array (
   'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/',
 );
 
-$databases['personnel']['default'] = array (
-  'database' => 'personnel',
-  'username' => 'root',
-  'password' => 'root',
-  'prefix' => '',
-  'host' => 'localhost',
-  'port' => '3306',
-  'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
-  'driver' => 'mysql',
-  'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/',
-);
-
 $settings['config_sync_directory'] = 'sites/default/files/config_qrLsRfw_wRQY6SwPef4LMYrMJENIv9tRCfwlbZIAK3eQgXnf5Mw8oh727uqIBGQpfbL3_LXwzA/sync';
 
 $settings['trusted_host_patterns'] = [
