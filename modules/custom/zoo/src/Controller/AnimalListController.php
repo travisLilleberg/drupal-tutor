@@ -85,7 +85,10 @@ class AnimalListController extends ControllerBase {
         $this->t('@weight kg', ['@weight' => $record->weight]),
       ];
       if($habitat === 'all') {
-        $row[] = $record->habitat_name;
+        $row[] = \Drupal\Core\Link::fromTextAndUrl(
+          $record->habitat_name,
+          \Drupal\Core\Url::fromRoute('zoo.habitat_list', ['habitat' => $record->habitat_id])
+        );
       }
 
       $rows[] = $row;
