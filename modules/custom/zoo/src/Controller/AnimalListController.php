@@ -62,21 +62,33 @@ class AnimalListController extends ControllerBase {
 
     $rows = [];
     $query = $this->conn->select('zoo_animal', 'a')
-      ->fields('a')
-      ->orderBy('name');
-    if ($habitat !== 'all') {
-      $query->condition('habitat_id', $habitat);
+      ->fields('a');
+
+    if ($habitat === 'all') {
+      $header[] = $this->t('Habitat');
+      $query->leftJoin('zoo_habitat', 'h', 'a.habitat_id = h.habitat_id');
+      $query->addField('h', 'name', 'habitat_name');
+      $query->orderBy('habitat_name');
     }
-    $results = $query->execute();
+    else {
+      $query->condition('a.habitat_id', $habitat);
+    }
+    $results = $query->orderBy('name')
+      ->execute();
 
     foreach ($results as $record) {
       $age = floor((\Drupal::time()->getRequestTime() - $record->birthday) / (365 * 24 * 3600));
-      $rows[] = [
+      $row = [
         $record->name,
         $record->type,
         $this->t('@age years', ['@age' => $age]),
         $this->t('@weight kg', ['@weight' => $record->weight]),
       ];
+      if($habitat === 'all') {
+        $row[] = $record->habitat_name;
+      }
+
+      $rows[] = $row;
     }
 
     return [
@@ -90,7 +102,7 @@ class AnimalListController extends ControllerBase {
     if ($habitat === 'all') {
       return $this->t('Animals in All Habitats');
     }
-    
+
     $name = $this->conn->select('zoo_habitat', 'h')
       ->fields('h', ['name'])
       ->condition('habitat_id', $habitat)
