@@ -92,6 +92,8 @@ class RouteExampleController extends ControllerBase {
       ]) .
       '</div>';
 
+    // '#markup' escapes possibly malicious code
+    // '#plain_text' to escape ALL html
     return [ '#markup' => $markup ];
   }
 
@@ -135,7 +137,8 @@ class RouteExampleController extends ControllerBase {
     return [
       '#theme' => 'table',
       '#header' => $header,
-      '#rows' => $rows
+      '#rows' => $rows,
+      '#caption' => $this->t('These are some nodes'),
     ];
   }
 
