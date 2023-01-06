@@ -9,3 +9,10 @@
   <div class="description">{{ animal.description }}</div>
 </div>
 
+{% if animal.weight > 2 %}
+  <div class="conditional">Bigger than 2 kg</div>
+{% endif %}
+
+{% for i in range(low=1, high=animal.weight, step=1) %}
+  <div class="count">Counting {{ i }} kg.</div>
+{% endfor %}
