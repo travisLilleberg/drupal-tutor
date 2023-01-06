@@ -37,7 +37,12 @@ class AnimalListController extends ControllerBase {
     foreach ($results as $record) {
       $age = floor((\Drupal::time()->getRequestTime() - $record->birthday) / (365 * 24 * 3600));
       $rows[] = [
-        $record->name,
+        \Drupal\Core\Link::fromTextAndUrl(
+          $record->name,
+          \Drupal\Core\Url::fromRoute(
+            'zoo.animal_view', ['animal_id' => $record->animal_id]
+          )
+        ),
         $record->type,
         $this->t('@age years', ['@age' => $age]),
         $this->t('@weight kg', ['@weight' => $record->weight]),
