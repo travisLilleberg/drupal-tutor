@@ -1,0 +1,8 @@
+.animal > div {
+  margin-bottom: 0.5em;
+}
+
+.animal label {
+  display: inline;
+  font-weight: bold;
+}
