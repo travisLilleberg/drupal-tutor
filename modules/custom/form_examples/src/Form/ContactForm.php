@@ -43,10 +43,28 @@ class ContactForm extends FormBase {
         $this->t('Only .edu addresses are allowed.')
       );
     }
+
+    if (strlen($form_state->getValue('message')) < 50) {
+      $form_state->setErrorByName(
+        'message',
+        $this->t('Please write a message of at least 50 characters.')
+      );
+    }
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state) {
     \Drupal::messenger()->addMessage($this->t('Thanks for Submitting the Form!'));
+    $keys = [ 'name', 'email', 'message'];
+    foreach ($keys as $key) {
+      \Drupal::messenger()->addMessage($this->t('@key: @value',
+        [
+          '@key' => $key,
+          '@value' => $form_state->getValue($key),
+        ]
+      ));
+    }
+
+    $form_state->setRedirect('<front>');
   }
 
 }
