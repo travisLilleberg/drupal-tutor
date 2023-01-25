@@ -35,6 +35,7 @@ zoo.demo_delete:
     _title: 'Demo: Delete Queries'
   requirements:
     _permission: 'access content'
+
 zoo.animal_view:
   path: '/animals/{animal_id}'
   defaults:
@@ -42,4 +43,19 @@ zoo.animal_view:
     _title_callback: '\Drupal\zoo\Controller\AnimalViewController::animalViewTitle'
   requirements:
     _permission: 'access content'
+
+zoo.animal_edit:
+  path: '/animals/{animal_id}/edit'
+  defaults:
+    _form: '\Drupal\zoo\Form\AnimalEditForm'
+    _title: 'Edit Animal'
+  requirements:
+    _permission: 'administer zoo'
+zoo.animal_add:
+  path: '/animals/add'
+  defaults:
+    _form: '\Drupal\zoo\Form\AnimalEditForm'
+    _title: 'Add Animal'
+  requirements:
+    _permission: 'administer zoo'
 
