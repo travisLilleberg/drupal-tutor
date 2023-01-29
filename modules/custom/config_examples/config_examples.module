@@ -1,0 +1,13 @@
+<?php
+
+function config_examples_cron() {
+  $api_config = \Drupal::config('config_examples.api');
+  if ($api_config->get('automatic_enabled')) {
+    \Drupal::messenger()->addMessage(t(
+      'Calling @url for the API results',
+      [
+        '@url' => $api_config->get('url')
+      ]
+    ));
+  }
+}
