@@ -1,0 +1,21 @@
+config_examples.api:
+  type: config_object
+  label: 'Config Examples API settings'
+  mapping:
+    url:
+      label: 'API Endpoint URL'
+      type: url
+    key:
+      label: 'API Key'
+      type: string
+    username:
+      label: 'Usernames to Retrieve Data For'
+      type: sequence
+      sequence:
+        type: string
+    automatic_enabled:
+      label: 'Enable Automatic Import of New Data'
+      type: boolean
+    automatic_frequency:
+      label: 'Automatic Import Frequency'
+      type: integer
