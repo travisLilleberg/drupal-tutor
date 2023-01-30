@@ -3,11 +3,23 @@
 function config_examples_cron() {
   $api_config = \Drupal::config('config_examples.api');
   if ($api_config->get('automatic_enabled')) {
-    \Drupal::messenger()->addMessage(t(
-      'Calling @url for the API results',
-      [
-        '@url' => $api_config->get('url')
-      ]
-    ));
+    $state = \Drupal::state();
+//    $state = \Drupal::service('state');
+
+    $last_run = $state->get('config_examples.last_api_import');
+    $req_time = \Drupal::time()->getRequestTime();
+    if (empty($last_run) ||
+      $last_run <= ($req_time - $api_config->get('automatic_frequency'))) {
+      \Drupal::messenger()->addMessage(t(
+        'Calling @url for the API results',
+        [
+          '@url' => $api_config->get('url')
+        ]
+      ));
+
+      $state->set('config_examples.last_api_import', $req_time);
+    }
   }
 }
+
+
