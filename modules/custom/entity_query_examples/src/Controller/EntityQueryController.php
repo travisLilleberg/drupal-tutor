@@ -48,6 +48,7 @@ class EntityQueryController extends ControllerBase {
       $this->t('Author'),
     ];
     $rows = [];
+    $authors = [];
     foreach ($nodes as $node) {
       $rows[] = [
         $node->id(),
@@ -55,12 +56,21 @@ class EntityQueryController extends ControllerBase {
         $node->getTitle(),
         $node->getOwner()->getDisplayName(),
       ];
+      $authors[] = $node->getOwner()->id();
+    }
+
+    $cache_tags = ['node_list'];
+    foreach ($authors as $uid) {
+      $cache_tags[] = 'user:' . $uid;
     }
 
     return [
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
+      '#cache' => [
+        'tags' => $cache_tags
+      ]
     ];
   }
 }
