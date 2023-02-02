@@ -116,6 +116,9 @@ class AnimalListController extends ControllerBase {
           'zoo/animal-list'
         ]
       ],
+      '#cache' => [
+        'tags' => ['animal.list'],
+      ],
     ];
   }
 

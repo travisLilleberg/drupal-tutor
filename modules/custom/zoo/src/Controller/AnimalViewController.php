@@ -30,6 +30,9 @@ class AnimalViewController extends ControllerBase {
     return [
       '#theme' => 'zoo_animal',
       '#animal' => $animal,
+      '#cache' => [
+        'tags' => ['animal.' . $animal_id]
+      ],
     ];
   }
 

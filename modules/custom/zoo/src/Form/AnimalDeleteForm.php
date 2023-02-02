@@ -2,6 +2,7 @@
 
 namespace Drupal\zoo\Form;
 
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Database\Connection;
 use \Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -18,13 +19,20 @@ class AnimalDeleteForm extends ConfirmFormBase {
    */
   private $connection;
 
-  public function __construct(Connection $connection) {
+  /**
+   * @var CacheTagsInvalidatorInterface
+   */
+  private $cacheTagInvalidator;
+
+  public function __construct(Connection $connection, CacheTagsInvalidatorInterface $cacheTagInvalidator) {
     $this->connection = $connection;
+    $this->cacheTagInvalidator = $cacheTagInvalidator;
   }
 
   public static function create(\Symfony\Component\DependencyInjection\ContainerInterface $container) {
     return new static(
-      $container->get('database')
+      $container->get('database'),
+      $container->get('cache_tags.invalidator')
     );
   }
 
@@ -53,5 +61,6 @@ class AnimalDeleteForm extends ConfirmFormBase {
       ->execute();
     \Drupal::messenger()->addMessage($this->t('Animal deleted.'));
     $form_state->setRedirect('zoo.habitat_list');
+    $this->cacheTagInvalidator->invalidateTags(['animal.' . $this->animal_id, 'animal.list']);
   }
 }

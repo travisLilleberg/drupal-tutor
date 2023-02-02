@@ -2,6 +2,7 @@
 
 namespace Drupal\zoo\Form;
 
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Database\Connection;
@@ -20,15 +21,26 @@ class AnimalEditForm extends FormBase {
    */
   private $dateFormatter;
 
-  function __construct(Connection $connection, DateFormatterInterface $dateFormatter) {
+  /**
+   * @var CacheTagsInvalidatorInterface
+   */
+  private $cacheTagInvalidator;
+
+  function __construct(
+    Connection $connection,
+    DateFormatterInterface $dateFormatter,
+    CacheTagsInvalidatorInterface $cacheTagInvalidator
+  ) {
     $this->connection = $connection;
     $this->dateFormatter = $dateFormatter;
+    $this->cacheTagInvalidator = $cacheTagInvalidator;
   }
 
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('database'),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('cache_tags.invalidator')
     );
   }
 
@@ -152,5 +164,7 @@ class AnimalEditForm extends FormBase {
     $form_state->setRedirect('zoo.animal_view',
       ['animal_id' => $animal_id]
     );
+
+    $this->cacheTagInvalidator->invalidateTags(['animal.' . $animal_id, 'animal.list']);
   }
 }
