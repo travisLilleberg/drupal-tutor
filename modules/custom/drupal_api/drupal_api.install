@@ -1,0 +1,51 @@
+<?php
+
+function drupal_api_schema() {
+  $schema = [];
+
+  $schema['drupal_api'] = [
+    'description' => 'Stores drupal.org api info for modules and themes.',
+    'fields' => [
+      'id' => [
+        'description' => t('The id from drupal.org.'),
+        'type' => 'int',
+        'size' => 'normal',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'type' => [
+        'description' => t('Theme or Module.'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'name' => [
+        'description' => t('The theme or module name.'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'created' => [
+        'description' => t('The unix timestamp from when module/theme was created.'),
+        'type' => 'int',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ],
+      'description' => [
+        'description' => t('The description of the module or theme.'),
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ],
+      'url' => [
+        'description' => t('The url to the module or theme.'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+}
