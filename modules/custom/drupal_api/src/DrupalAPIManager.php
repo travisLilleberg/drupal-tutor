@@ -15,26 +15,42 @@ class DrupalAPIManager implements DrupalAPIManagerInterface {
     $this->messenger = $messenger;
   }
 
-  public function getLatestModules() {
-    $module_data = $this->pullModuleData();
-    if (empty($module_data) || empty($module_data->list)) {
+  /**
+   * Gets the latest modules or themes from drupal.org.
+   *
+   * @param string $type
+   *   'module' or 'theme'. Default is 'module.
+   *
+   * @return array
+   */
+  public function getLatest(string $type = 'module') {
+    $data = $this->pullData($type);
+    if (empty($data) || empty($data->list)) {
       return [];
     }
 
-    $modules = [];
-    foreach ($module_data->list as $module) {
-      $modules[] = [
-        'url' => $module->url,
-        'name' => $module->title,
-        'created' => $module->created,
-        'description' => empty($module->body) ? '' : $module->body->value,
+    $items = [];
+    foreach ($data->list as $item) {
+      $items[] = [
+        'url' => $item->url,
+        'name' => $item->title,
+        'created' => $item->created,
+        'description' => empty($item->body) ? '' : $item->body->value,
       ];
     }
-    return $modules;
+    return $items;
   }
 
-  private function pullModuleData() {
-    $url = 'https://www.drupal.org/api-d7/node.json?type=project_module&limit=10&sort=created&direction=DESC&field_project_type=full';
+  /**
+   * Pulls module or theme data from drupal.org.
+   *
+   * @param string $type
+   *   'module' or 'theme'.
+   */
+  private function pullData(string $type) {
+    $url = 'https://www.drupal.org/api-d7/node.json?type=project_' .
+      $type .
+      '&limit=10&sort=created&direction=DESC&field_project_type=full';
     try {
       $response = $this->client->request('GET', $url);
       if ($response->getStatusCode() === 200) {
@@ -44,7 +60,7 @@ class DrupalAPIManager implements DrupalAPIManagerInterface {
         $this->messenger->addMessage(t("Couldn't pull module data."), 'error');
       }
     }
-    catch (\Exception $ex) {
+    catch (\GuzzleHttp\Exception\GuzzleException $ex) {
       $this->messenger->addMessage(t("Couldn't pull module data."), 'error');
     }
   }

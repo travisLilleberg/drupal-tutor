@@ -7,5 +7,5 @@ interface DrupalAPIManagerInterface {
   /**
    * @return array
    */
-  public function getLatestModules();
+  public function getLatest();
 }

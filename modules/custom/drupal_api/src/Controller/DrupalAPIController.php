@@ -30,15 +30,40 @@ class DrupalAPIController extends ControllerBase {
     );
   }
 
+  /**
+   * Controller to display module page.
+   *
+   * @return string[]
+   */
   public function latestModules() {
+    return $this->buildHtml($this->drupalAPIManager->getLatest('module'));
+  }
+
+  /**
+   * Controller to display theme page.
+   *
+   * @return string[]
+   */
+  public function latestThemes() {
+    return $this->buildHtml($this->drupalAPIManager->getLatest('theme'));
+  }
+
+  /**
+   * Builds html for passed in module or theme info.
+   *
+   * @param $items
+   *   The modules or themes to display.
+   *
+   * @return string[]
+   */
+  private function buildHtml($items) {
     $markup = '';
-    $modules = $this->drupalAPIManager->getLatestModules();
-    foreach ($modules as $mod) {
+    foreach ($items as $item) {
       $markup .= "
         <div class='module'>
-          <h2><a target='_blank' href='{$mod['url']}'>{$mod['name']}</a></h2>
-          <div class='created'>{$this->dateFormatter->format($mod['created'], 'olivero_medium')}</div>
-          <div class='description'>{$mod['description']}</div>
+          <h2><a target='_blank' href='{$item['url']}'>{$item['name']}</a></h2>
+          <div class='created'>{$this->dateFormatter->format($item['created'], 'olivero_medium')}</div>
+          <div class='description'>{$item['description']}</div>
         </div>
       ";
     }
