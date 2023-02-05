@@ -1,5 +1,5 @@
 drupal_api.latest_modules:
-  path: '/latest-drupal-modules'
+  path: '/drupal/modules'
   defaults:
     _controller: '\Drupal\drupal_api\Controller\DrupalAPIController::latestModules'
     _title: 'Latest Drupal Modules'
