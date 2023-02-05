@@ -18,9 +18,6 @@ class DrupalAPIController extends ControllerBase {
    */
   private DateFormatterInterface $dateFormatter;
 
-  /**
-   * {inheritdoc}
-   */
   public function __construct($drupal_api_manager, $date_formatter) {
     $this->drupalAPIManager = $drupal_api_manager;
     $this->dateFormatter = $date_formatter;
@@ -39,7 +36,7 @@ class DrupalAPIController extends ControllerBase {
     foreach ($modules as $mod) {
       $markup .= "
         <div class='module'>
-          <h2><a href='{$mod['url']}'>{$mod['name']}</a></h2>
+          <h2><a target='_blank' href='{$mod['url']}'>{$mod['name']}</a></h2>
           <div class='created'>{$this->dateFormatter->format($mod['created'], 'olivero_medium')}</div>
           <div class='description'>{$mod['description']}</div>
         </div>

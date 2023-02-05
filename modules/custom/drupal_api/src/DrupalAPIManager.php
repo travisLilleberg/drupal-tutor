@@ -2,30 +2,50 @@
 
 namespace Drupal\drupal_api;
 
-use Drupal\drupal_api\DrupalAPIManagerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use GuzzleHttp\ClientInterface;
 
 class DrupalAPIManager implements DrupalAPIManagerInterface {
+
+  private ClientInterface $client;
+  private MessengerInterface $messenger;
+
+  public function __construct(ClientInterface $client, MessengerInterface $messenger) {
+    $this->client = $client;
+    $this->messenger = $messenger;
+  }
+
   public function getLatestModules() {
+    $module_data = $this->pullModuleData();
+    if (empty($module_data) || empty($module_data->list)) {
+      return [];
+    }
+
     $modules = [];
-    $modules[] = [
-      'name' => 'Module #1',
-      'created' => '1527163200',
-      'description' => 'This is module #1',
-      'url' => 'https://example.com',
-    ];
-    $modules[] = [
-      'name' => 'Module #2',
-      'created' => '1527076800',
-      'description' => 'This is module #2',
-      'url' => 'https://example.com',
-    ];
-    $modules[] = [
-      'name' => 'Module #3',
-      'created' => '1526990400',
-      'description' => 'This is module #3',
-      'url' => 'https://example.com',
-    ];
-    
+    foreach ($module_data->list as $module) {
+      $modules[] = [
+        'url' => $module->url,
+        'name' => $module->title,
+        'created' => $module->created,
+        'description' => empty($module->body) ? '' : $module->body->value,
+      ];
+    }
     return $modules;
+  }
+
+  private function pullModuleData() {
+    $url = 'https://www.drupal.org/api-d7/node.json?type=project_module&limit=10&sort=created&direction=DESC&field_project_type=full';
+    try {
+      $response = $this->client->request('GET', $url);
+      if ($response->getStatusCode() === 200) {
+        return json_decode($response->getBody()->getContents());
+      }
+      else {
+        $this->messenger->addMessage(t("Couldn't pull module data."), 'error');
+      }
+    }
+    catch (\Exception $ex) {
+      $this->messenger->addMessage(t("Couldn't pull module data."), 'error');
+    }
   }
 }
