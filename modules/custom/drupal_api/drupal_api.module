@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * Implements hook_cron().
+ */
+function drupal_api_cron() {
+  \Drupal::service('drupal_api.manager')->fetchLatestProjects();
+}

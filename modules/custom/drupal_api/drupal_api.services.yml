@@ -1,5 +1,5 @@
 services:
   drupal_api.manager:
     class: Drupal\drupal_api\DrupalAPIManager
-    arguments: ['@http_client', '@messenger']
+    arguments: ['@http_client', '@messenger', '@database']
 
