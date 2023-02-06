@@ -46,7 +46,19 @@ class DrupalAPIController extends ControllerBase {
    */
   public function latestModules() {
 //    return $this->buildHtml($this->drupalAPIManager->getLatest('module'));
-    return $this->buildHtml($this->loadItems('project_module'));
+//    return $this->buildHtml($this->loadItems('project_module'));
+    $build = [];
+    foreach ($this->loadItems('project_module') as $module) {
+      $build[] = [
+        '#theme' => 'drupal_api_project',
+        '#name' => $module['name'],
+        '#url' => $module['url'],
+        '#description' => $module['description'],
+        '#created' => $this->dateFormatter->format($module['created'], 'olivero_medium'),
+      ];
+    }
+
+    return $build;
   }
 
   /**
@@ -56,7 +68,19 @@ class DrupalAPIController extends ControllerBase {
    */
   public function latestThemes() {
 //    return $this->buildHtml($this->drupalAPIManager->getLatest('theme'));
-    return $this->buildHtml($this->loadItems('project_theme'));
+//    return $this->buildHtml($this->loadItems('project_module'));
+    $build = [];
+    foreach ($this->loadItems('project_theme') as $theme) {
+      $build[] = [
+        '#theme' => 'drupal_api_project',
+        '#name' => $theme['name'],
+        '#url' => $theme['url'],
+        '#description' => $theme['description'],
+        '#created' => $this->dateFormatter->format($theme['created'], 'olivero_medium'),
+      ];
+    }
+
+    return $build;
   }
 
   /**
@@ -111,7 +135,6 @@ class DrupalAPIController extends ControllerBase {
 
     return [
       '#markup' => $markup,
-      '#cache' => ['max-age' => 0],
     ];
   }
 }
