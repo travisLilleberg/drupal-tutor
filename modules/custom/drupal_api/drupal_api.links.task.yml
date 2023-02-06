@@ -2,7 +2,7 @@ drupal_api.latest_modules:
   title: 'Modules'
   route_name: drupal_api.latest_modules
   base_route: drupal_api.latest_modules
-route_examples.hello_world:
+drupal_api.latest_themes:
   title: 'Themes'
   route_name: drupal_api.latest_themes
   base_route: drupal_api.latest_modules
