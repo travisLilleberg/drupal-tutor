@@ -3,8 +3,10 @@
 namespace Drupal\drupal_api\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\drupal_api\DrupalAPIManagerInterface;
+use Drupal\KernelTests\Core\Database\FetchTest;
 
 class DrupalAPIController extends ControllerBase {
 
@@ -18,15 +20,22 @@ class DrupalAPIController extends ControllerBase {
    */
   private DateFormatterInterface $dateFormatter;
 
-  public function __construct($drupal_api_manager, $date_formatter) {
+  /**
+   * @var Connection
+   */
+  private Connection $connection;
+
+  public function __construct($drupal_api_manager, $date_formatter, $connection) {
     $this->drupalAPIManager = $drupal_api_manager;
     $this->dateFormatter = $date_formatter;
+    $this->connection = $connection;
   }
 
   public static function create(\Symfony\Component\DependencyInjection\ContainerInterface $container) {
     return new static(
       $container->get('drupal_api.manager'),
       $container->get('date.formatter'),
+      $container->get('database'),
     );
   }
 
@@ -36,7 +45,8 @@ class DrupalAPIController extends ControllerBase {
    * @return string[]
    */
   public function latestModules() {
-    return $this->buildHtml($this->drupalAPIManager->getLatest('module'));
+//    return $this->buildHtml($this->drupalAPIManager->getLatest('module'));
+    return $this->buildHtml($this->loadItems('project_module'));
   }
 
   /**
@@ -45,7 +55,38 @@ class DrupalAPIController extends ControllerBase {
    * @return string[]
    */
   public function latestThemes() {
-    return $this->buildHtml($this->drupalAPIManager->getLatest('theme'));
+//    return $this->buildHtml($this->drupalAPIManager->getLatest('theme'));
+    return $this->buildHtml($this->loadItems('project_theme'));
+  }
+
+  /**
+   * Load the themes and modules from the database.
+   *
+   * @param string $type
+   *   project_module or project_theme.
+   *
+   * @return array
+   */
+  private function loadItems(string $type) {
+    $results = $this->connection->select('drupal_api' ,'d')
+      ->fields('d', ['url', 'name', 'created', 'description'])
+      ->condition('type', $type)
+      ->orderBy('created', 'DESC')
+      ->range(0,10)
+      ->execute()
+      ->fetchAll(\PDO::FETCH_ASSOC);
+
+    $items = [];
+    foreach ($results as $result) {
+      $items[] = [
+        'name' => $result['name'],
+        'url' => $result['url'],
+        'created' => $result['created'],
+        'description' => $result['description'],
+      ];
+    }
+
+    return $items;
   }
 
   /**
@@ -70,6 +111,7 @@ class DrupalAPIController extends ControllerBase {
 
     return [
       '#markup' => $markup,
+      '#cache' => ['max-age' => 0],
     ];
   }
 }
