@@ -2,6 +2,7 @@
 
 namespace Drupal\drupal_api;
 
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Database\Connection;
 use GuzzleHttp\ClientInterface;
@@ -11,11 +12,18 @@ class DrupalAPIManager implements DrupalAPIManagerInterface {
   private ClientInterface $client;
   private MessengerInterface $messenger;
   private Connection $connection;
+  private CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
-  public function __construct(ClientInterface $client, MessengerInterface $messenger, Connection $connection) {
+  public function __construct(
+    ClientInterface $client,
+    MessengerInterface $messenger,
+    Connection $connection,
+    CacheTagsInvalidatorInterface $cache_tags_invalidator,
+  ) {
     $this->client = $client;
     $this->messenger = $messenger;
     $this->connection = $connection;
+    $this->cacheTagsInvalidator = $cache_tags_invalidator;
   }
 
   /**
@@ -73,6 +81,7 @@ class DrupalAPIManager implements DrupalAPIManagerInterface {
         $this->messenger->addMessage(t("Failed inserting new themes and modules."));
       }
 
+      $this->cacheTagsInvalidator->invalidateTags(['drupal_api.project.list']);
       $this->messenger->addMessage(t("New modules and themes imported."));
     }
   }

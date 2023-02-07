@@ -58,6 +58,9 @@ class DrupalAPIController extends ControllerBase {
       ];
     }
 
+    $build['#cache'] = [
+      'tags' => ['drupal_api.project.list'],
+    ];
     return $build;
   }
 
@@ -80,6 +83,9 @@ class DrupalAPIController extends ControllerBase {
       ];
     }
 
+    $build['#cache'] = [
+      'tags' => ['drupal_api.project.list'],
+    ];
     return $build;
   }
 
