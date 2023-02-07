@@ -4,7 +4,20 @@
  * Implements hook_cron().
  */
 function drupal_api_cron() {
-  \Drupal::service('drupal_api.manager')->fetchLatestProjects();
+  $drupal_api_config = \Drupal::config('drupal_api.settings');
+  if (!$drupal_api_config->get('automatic_enabled')) {
+    return;
+  }
+
+  $state = \Drupal::state();
+  $last_run = $state->get('drupal_api.last_import');
+  $req_time = \Drupal::time()->getRequestTime();
+  if (empty($last_run) ||
+    $last_run <= ($req_time - $drupal_api_config->get('automatic_frequency'))) {
+    \Drupal::messenger()->addMessage(t('Pulling latest Drupal modules and themes.'));
+    \Drupal::service('drupal_api.manager')->fetchLatestProjects();
+    $state->set('drupal_api.last_import', $req_time);
+  }
 }
 
 /**
