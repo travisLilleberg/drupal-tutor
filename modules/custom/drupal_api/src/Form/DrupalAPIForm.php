@@ -2,10 +2,27 @@
 
 namespace Drupal\drupal_api\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\drupal_api\DrupalAPIManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class DrupalAPIForm extends ConfigFormBase {
+
+  private DrupalAPIManagerInterface $APIManager;
+
+  public function __construct(ConfigFactoryInterface $config_factory, DrupalAPIManagerInterface $api_manager) {
+    parent::__construct($config_factory);
+    $this->APIManager = $api_manager;
+  }
+
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('drupal_api.manager'),
+    );
+  }
 
   protected function getEditableConfigNames() {
     return ['drupal_api.settings'];
@@ -51,6 +68,13 @@ class DrupalAPIForm extends ConfigFormBase {
       ]
     ];
 
+    $form['import'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Import Now'),
+      '#name' => 'import_now',
+      '#submit' => ['::importNow'],
+    ];
+
     return $form;
   }
 
@@ -60,5 +84,12 @@ class DrupalAPIForm extends ConfigFormBase {
     $drupal_api_config->set('automatic_enabled', $form_state->getValue('enabled'))
       ->set('automatic_frequency', $form_state->getValue('frequency'))
       ->save();
+  }
+
+  /**
+   * Imports the items immediately.
+   */
+  public function importNow(array &$form, FormStateInterface $form_state) {
+    $this->APIManager->fetchLatestProjects();
   }
 }
