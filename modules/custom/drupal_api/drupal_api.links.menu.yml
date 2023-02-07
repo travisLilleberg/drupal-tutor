@@ -1,0 +1,6 @@
+drupal_api.config:
+  title: 'Drupal API ingest Configuration'
+  description: 'Configure the Drupal API settings.'
+  route_name: drupal_api.config
+  parent: system.admin_config_services
+  menu_name: admin
